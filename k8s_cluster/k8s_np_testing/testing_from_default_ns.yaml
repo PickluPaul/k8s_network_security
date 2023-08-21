@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connectivity-test-pod
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: connectivity-test
+  template:
+    metadata:
+      labels:
+        app: connectivity-test
+    spec:
+      containers:
+        - name: connectivity-test-container
+          image: ubuntu:latest
+          command: ["sh", "-c", "apt update && apt install -y netcat  && nc -vz -w 5 backend-service.backend 5000 && nc -vz -w 5 redis.database 6379;sleep 3m"]

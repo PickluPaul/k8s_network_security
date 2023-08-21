@@ -1,0 +1,37 @@
+# This k8s network policy is applied on the database service
+#INGRESS - allows inbound traffic only from backend api service on the redis service port 6379.
+#EGRESS - no outbound traffic is allowed except kube-dns
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: database-network-policy
+  namespace: database
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          project: backend
+      podSelector:
+        matchLabels:
+          app: backend
+    ports:
+        - protocol: TCP
+          port: 6379
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+        - protocol: TCP
+          port: 9153
+

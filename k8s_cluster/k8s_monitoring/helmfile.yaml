@@ -1,0 +1,31 @@
+repositories:
+  - name: falcosecurity
+    url: https://falcosecurity.github.io/charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:  
+  - name: falco
+    namespace: monitoring
+    chart: falcosecurity/falco
+    atomic: true
+    values:
+      - falco-values.yaml
+
+  - name: falcoexporter
+    namespace: monitoring
+    chart: falcosecurity/falco-exporter
+    atomic: true
+
+  - name: prometheus
+    namespace: monitoring
+    chart: prometheus-community/kube-prometheus-stack
+    atomic: true
+    values:
+      - prometheus-values.yaml
+
+
+
+
+
+    

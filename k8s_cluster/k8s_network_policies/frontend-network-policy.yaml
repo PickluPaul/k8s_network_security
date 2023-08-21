@@ -1,0 +1,40 @@
+# This k8s network policy network is applied on the frontend service
+#INGRESS - allows inbound traffic only from loadbalance on the frontend port 8080. (we have allowed 0.0.0.0/0 only only for demo, in production it will be Loadbalance IP or K8s Ingress IP)
+#EGRESS - allow outbount traffic to only backend service on port 5000
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: frontend-network-policy
+  namespace: frontend
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0 #in production, replace this ip with Loadbalance IP or K8s Ingress IP
+    ports:
+          - protocol: TCP
+            port: 8080
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          project: backend
+      podSelector:
+        matchLabels:
+          app: backend
+    - namespaceSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+        - protocol: TCP
+          port: 5000
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+        - protocol: TCP
+          port: 9153
